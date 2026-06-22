@@ -17,7 +17,7 @@ A knowledge base for AI-assisted SAP ABAP S/4HANA migration. There is no build s
 | File | Purpose |
 | --- | --- |
 | `prompts/abap_fixer_prompt.txt` | Vietnamese-language system prompt. Paste this into the AI context before the user's code. |
-| `docs/reference/rules/{ID}.md` | **Primary lookup** — one file per error ID (B001, B002, B014, B016, T003, T007, T010, T019, T020, T021, D001, F014). Read the exact file needed. |
+| `docs/reference/rules/{ID}.md` | **Primary lookup** — one file per error ID (B001, B002, B014, B016, T003, T007, T010, T019, T020, T021, T022, T023, T024, D001, F014). Read the exact file needed. |
 | `docs/reference/sap_abap_error_reference.md` | Full reference (sections 6–11: naming conventions, coding rules, migration best practices). Fallback if rule file not found. |
 
 ## Mandatory output format (every code fix)
@@ -33,7 +33,7 @@ Never use Git-style diff format (`-`/`+` lines).
 
 All code changes must be wrapped with these markers (Japanese language for inline logic comments):
 
-```
+```text
 * S/4HANA Migration ADD START   ← new logic
 * S/4HANA Migration ADD END
 
@@ -45,6 +45,7 @@ All code changes must be wrapped with these markers (Japanese language for inlin
 ```
 
 Add the program header **only** when the user provides a complete program (contains `REPORT` or `PROGRAM` statement):
+
 ```abap
 *----------------------------------------------------------------------*
 * 修正履歴
@@ -57,16 +58,15 @@ Add the program header **only** when the user provides a complete program (conta
 
 All variable names UPPERCASE. Required prefixes:
 
-| Scope | Variable | Structure | Table | Constant |
-|-------|----------|-----------|-------|----------|
-| Local | `LV_` | `LS_` | `LT_` | `CNS_` |
-| Global | `GV_` | `GS_` | `GT_` | `CNS_` |
+| Scope  | Variable | Structure | Table | Constant |
+| ------ | -------- | --------- | ----- | -------- |
+| Local  | `LV_`    | `LS_`     | `LT_` | `CNS_`   |
+| Global | `GV_`    | `GS_`     | `GT_` | `CNS_`   |
 
 Before declaring a new variable in an `ADD START` block, check existing DATA declarations in the same FORM/program — reuse a variable of the same type if possible instead of declaring a new one.
 
 ## Supported error IDs
 
-`B001` `B002` `B014` `B016` `T003` `T007` `T010` `T019` `T020` `T021` `D001` `F014`
+`B001` `B002` `B014` `B016` `T003` `T007` `T010` `T019` `T020` `T021` `T022` `T023` `T024` `D001` `F014`
 
 For any other error ID, do not attempt a fix — ask the user for the applicable rule or SAP Note first.
-
