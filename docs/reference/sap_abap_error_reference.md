@@ -8,6 +8,18 @@ Tài liệu này được trích xuất và dịch từ file tài liệu hướn
 
 * **Không tự đoán khi thiếu dữ liệu:** Quy tắc này áp dụng cho toàn bộ task và mọi mã lỗi. Nếu thiếu thông tin cần thiết để xác định đúng cách sửa, ví dụ thiếu type/length/decimal của field, structure/table definition, logic trước/sau đoạn code, ATC detail, SAP Note/message, mapping field, hoặc business rule, phải yêu cầu người dùng cung cấp thêm trước khi viết code sửa.
 * **Tuyệt đối không tự suy đoán:** Không tự đoán field, table, mapping, length, nghiệp vụ hoặc hướng xử lý khi dữ liệu chưa đủ.
+* **Ưu tiên code tường minh (明示的記述優先):** Quy tắc này áp dụng cho toàn bộ task và mọi mã lỗi. Khi viết điều kiện logic / vòng lặp / phân nhánh, ưu tiên cách viết **tường minh, tự diễn giải ý đồ nghiệp vụ** thay vì rút gọn, kể cả khi hai cách cho kết quả tương đương.
+  * Viết tách bạch từng nhánh điều kiện thay vì dựa vào giá trị mặc định/initial của field để rút gọn. Ví dụ ưu tiên `IF AUGBL = SPACE OR ( AUGBL <> SPACE AND AUGDT > P_BUDAT ).` thay vì `IF AUGBL = SPACE OR AUGDT > P_BUDAT.`
+  * Khi gộp nhiều nguồn dữ liệu trong một xử lý, thêm comment map mỗi nhánh về nguồn gốc (vd nhánh nào tương ứng BSIS / BSAS).
+  * Lý do: dễ đọc, dễ review, dễ maintain quan trọng hơn việc viết ngắn.
+* **Quy ước comment-out dòng cũ (UPD/DEL):** đặt `*` ở **cột 1** rồi **giữ nguyên toàn bộ phần còn lại của dòng gốc, kể cả khoảng trắng thụt đầu dòng** — comment phải là bản sao y hệt dòng gốc chỉ thêm `*`, không tự bớt/thêm space để căn lề. Dòng code mới giữ đúng indent gốc.
+
+  ```abap
+  * S/4HANA Migration UPD START
+  *    FROM ANEK        " "*" + nguyên dòng gốc "    FROM ANEK"
+      FROM FAAV_ANEK    " dòng mới giữ indent gốc 4 space
+  * S/4HANA Migration UPD END
+  ```
 
 ---
 
