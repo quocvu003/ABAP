@@ -17,7 +17,7 @@ A knowledge base for AI-assisted SAP ABAP S/4HANA migration. There is no build s
 | File | Purpose |
 | --- | --- |
 | `prompts/abap_fixer_prompt.txt` | Vietnamese-language system prompt. Paste this into the AI context before the user's code. |
-| `docs/reference/rules/{ID}.md` | **Primary lookup** — one file per error ID (B001, B002, B014, B016, T003, T007, T010, T019, T020, T021, T022, T023, T024, D001, F014). Read the exact file needed. |
+| `docs/reference/rules/{ID}.md` | **Primary lookup** — one file per error ID (B001, B002, B014, B016, T002, T003, T007, T010, T019, T020, T021, T022, T023, T024, D001, F014). Read the exact file needed. |
 | `docs/reference/sap_abap_error_reference.md` | Full reference (sections 6–11: naming conventions, coding rules, migration best practices). Fallback if rule file not found. |
 
 ## Mandatory output format (every code fix)
@@ -67,6 +67,6 @@ Before declaring a new variable in an `ADD START` block, check existing DATA dec
 
 ## Supported error IDs
 
-`B001` `B002` `B014` `B016` `T003` `T007` `T010` `T019` `T020` `T021` `T022` `T023` `T024` `D001` `F014`
+`B001` `B002` `B014` `B016` `T002` `T003` `T007` `T010` `T019` `T020` `T021` `T022` `T023` `T024` `D001` `F014`
 
 For any other error ID, do not attempt a fix — ask the user for the applicable rule or SAP Note first.
