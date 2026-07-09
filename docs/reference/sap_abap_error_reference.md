@@ -7,7 +7,10 @@ Tài liệu này được trích xuất và dịch từ file tài liệu hướn
 ## 0. Nguyên tắc chung khi sửa lỗi
 
 * **Không tự đoán khi thiếu dữ liệu:** Quy tắc này áp dụng cho toàn bộ task và mọi mã lỗi. Nếu thiếu thông tin cần thiết để xác định đúng cách sửa, ví dụ thiếu type/length/decimal của field, structure/table definition, logic trước/sau đoạn code, ATC detail, SAP Note/message, mapping field, hoặc business rule, phải yêu cầu người dùng cung cấp thêm trước khi viết code sửa.
-* **Tuyệt đối không tự suy đoán:** Không tự đoán field, table, mapping, length, nghiệp vụ hoặc hướng xử lý khi dữ liệu chưa đủ.
+* **Tuyệt đối không tự suy đoán (KHÔNG có ngoại lệ):** Không tự đoán field, table, mapping, length, nghiệp vụ hoặc hướng xử lý khi dữ liệu chưa đủ.
+  * **Cấm mẫu "đoán rồi ghi chú/flag":** KHÔNG được viết code dựa trên giả định rồi kèm chú thích kiểu "giả sử ...", "nếu structure khác thì...". Khi thiếu thông tin → **DỪNG và HỎI**, KHÔNG xuất code (kể cả code tạm/placeholder) cho phần phụ thuộc thông tin đó.
+  * **Ví dụ bắt buộc phải hỏi:** `SELECT ... APPENDING TABLE` / `INTO TABLE` **không** `CORRESPONDING` → map theo **VỊ TRÍ**, không suy ra được **TÊN** field của structure đích → phải xin định nghĩa structure trước khi viết `APPEND VALUE` / `MOVE-CORRESPONDING`. Tương tự với type/length/decimal của field, table definition, business rule.
+  * Nếu chỉ thiếu một phần nhỏ, vẫn **hỏi đúng phần đó** rồi mới tiếp tục — không "tạm điền để chạy trước".
 * **Ưu tiên code tường minh (明示的記述優先):** Quy tắc này áp dụng cho toàn bộ task và mọi mã lỗi. Khi viết điều kiện logic / vòng lặp / phân nhánh, ưu tiên cách viết **tường minh, tự diễn giải ý đồ nghiệp vụ** thay vì rút gọn, kể cả khi hai cách cho kết quả tương đương.
   * Viết tách bạch từng nhánh điều kiện thay vì dựa vào giá trị mặc định/initial của field để rút gọn. Ví dụ ưu tiên `IF AUGBL = SPACE OR ( AUGBL <> SPACE AND AUGDT > P_BUDAT ).` thay vì `IF AUGBL = SPACE OR AUGDT > P_BUDAT.`
   * Khi gộp nhiều nguồn dữ liệu trong một xử lý, thêm comment map mỗi nhánh về nguồn gốc (vd nhánh nào tương ứng BSIS / BSAS).
@@ -20,6 +23,24 @@ Tài liệu này được trích xuất và dịch từ file tài liệu hướn
       FROM FAAV_ANEK    " dòng mới giữ indent gốc 4 space
   * S/4HANA Migration UPD END
   ```
+
+* **`FOR ALL ENTRIES` — luôn (1) guard driver rỗng, (2) khử trùng driver:** áp dụng cho toàn bộ task, mỗi khi dùng `SELECT ... FOR ALL ENTRIES IN <driver>`:
+  1. **Guard driver rỗng:** bọc bằng `IF <driver> IS NOT INITIAL. ... ENDIF.` — vì `FOR ALL ENTRIES` với driver rỗng sẽ **bỏ toàn bộ điều kiện driver → quét full bảng DB**.
+  2. **Khử trùng driver theo đúng các field dùng trong WHERE:** tạo **bảng driver riêng** chỉ chứa giá trị duy nhất của các field đó (`SORT` + `DELETE ADJACENT DUPLICATES`). **KHÔNG** `SORT`/dedup trực tiếp bảng nguồn đang dùng cho mục đích khác. Driver trùng → FAE sinh điều kiện `OR` dư thừa gửi xuống DB (lãng phí).
+  * Lưu ý: FAE **tự khử trùng tập KẾT QUẢ** (implicit DISTINCT) nên đúng đắn không bị ảnh hưởng; khử trùng driver là **tối ưu hiệu năng**.
+  * Ví dụ (driver chỉ dùng `BUKRS`):
+
+    ```abap
+    LT_BUKRS = VALUE #( FOR LS_X IN IT_SRC ( LS_X-BUKRS ) ).
+    SORT LT_BUKRS.
+    DELETE ADJACENT DUPLICATES FROM LT_BUKRS.
+    IF LT_BUKRS IS NOT INITIAL.
+      SELECT ... FROM BKPF
+        FOR ALL ENTRIES IN LT_BUKRS
+       WHERE BUKRS = LT_BUKRS-TABLE_LINE
+         AND BSTAT = 'U'.
+    ENDIF.
+    ```
 
 ---
 
