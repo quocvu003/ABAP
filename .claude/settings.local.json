@@ -5,7 +5,8 @@
       "Bash(Select-Object Name, Mode)",
       "PowerShell(\\(Get-Item \"C:\\\\WEB\\\\abap-helper\\\\README.md\"\\).Length, \\(Get-Item \"C:\\\\WEB\\\\abap-helper\\\\prompts\\\\abap_fixer_prompt.txt\"\\).Length, \\(Get-Item \"C:\\\\WEB\\\\abap-helper\\\\docs\\\\reference\\\\sap_abap_error_reference.md\"\\).Length)",
       "Bash(mkdir -p \"c:/WEB/abap-helper/docs/reference/rules\")",
-      "Bash(Remove-Item \"c:\\\\WEB\\\\abap-helper\\\\docs\\\\README.md\")"
+      "Bash(Remove-Item \"c:\\\\WEB\\\\abap-helper\\\\docs\\\\README.md\")",
+      "PowerShell(git *)"
     ],
     "additionalDirectories": [
       "c:\\WEB\\abap-helper\\docs\\reference"
